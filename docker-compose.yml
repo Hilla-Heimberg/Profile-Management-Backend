@@ -1,0 +1,24 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres
+    environment:
+      - POSTGRES_USER=omri
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_DB=social_network
+    ports:
+      - 5432:5432
+  python_server:
+    image: python:3.8-alpine
+    environment:
+      - DATABASE_URL=postgres://omri:1234@postgres:5432/social_network
+    depends_on:
+      - postgres
+    ports:
+      - 5000:5000
+    volumes:
+      - .:/app
+    working_dir: /app/
+    build:
+      context: .
+    entrypoint: ["sh", "-c", "pip install -r requirements.txt && python3.8 social_profile_server/social_profile_server.py"]
